@@ -1,4 +1,2 @@
 package edu.upc.dsa.exceptions;
-
-public class LibroNoEncontradoException {
-}
+public class LibroNoEncontradoException extends Exception {}

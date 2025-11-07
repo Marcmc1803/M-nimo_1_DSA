@@ -1,103 +1,125 @@
 package edu.upc.dsa;
 
-import edu.upc.dsa.exceptions.TrackNotFoundException;
+import edu.upc.dsa.exceptions.*;
+import edu.upc.dsa.models.Lector;
 import edu.upc.dsa.models.Libro;
+import edu.upc.dsa.models.LibroCatalogado;
+
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
-import java.util.List;
+public class BibliotecaManagerTest {
 
-public class ManagerTest {
-    Manager tm;
+    BibliotecaManager bm;
 
     @Before
     public void setUp() {
-        this.tm = ManagerImpl.getInstance();
-        this.tm.addTrack("T1", "La Barbacoa", "Georgie Dann");
-        this.tm.addTrack("T2", "Despacito", "Luis Fonsi");
-        this.tm.addTrack("T3", "Ent3r S4ndm4n", "Metallica");
+        this.bm = BibliotecaManagerImpl.getInstance();
+
+        this.bm.agregarLector(new Lector("lector1", "Marc", "Martín", "5678JG45Q"));
+
+        for (int i = 1; i <= 10; i++) {
+            this.bm.almacenarLibro(new Libro("ID" + i, "ISBN" + i, "Libro " + i, "Autor"));
+        }
+
+
+        this.bm.almacenarLibro(new Libro("ID11", "ISBN456", "Libro 11", "Autor"));
+        this.bm.almacenarLibro(new Libro("ID12", "ISBN789", "Libro 12", "Autor"));
     }
 
     @After
     public void tearDown() {
-        // És un Singleton
-        this.tm.clear();
+        this.bm.reiniciar();
     }
 
     @Test
-    public void addTrackTest() {
-        Assert.assertEquals(3, tm.size());
+    public void testAlmacenarLibro() {
+        assertEquals(2, this.bm.totalMontones());
+        assertEquals(12, this.bm.totalLibrosAlmacen());
 
-        this.tm.addTrack("La Vereda De La Puerta De Atrás", "Extremoduro");
+        for (int i = 13; i <= 20; i++) {
+            this.bm.almacenarLibro(new Libro("ID" + i, "ISBNXXX", "Libro " + i, "Autor"));
+        }
+        assertEquals(2, this.bm.totalMontones());
+        assertEquals(20, this.bm.totalLibrosAlmacen());
 
-        Assert.assertEquals(4, tm.size());
-
+        this.bm.almacenarLibro(new Libro("ID21", "ISBNYYY", "Libro 21", "Autor"));
+        assertEquals(3, this.bm.totalMontones());
+        assertEquals(21, this.bm.totalLibrosAlmacen());
     }
 
     @Test
-    public void getTrackTest() throws Exception {
-        Assert.assertEquals(3, tm.size());
+    public void testCatalogarLibro() throws AlmacenVacioException {
 
-        Libro t = this.tm.getTrack("T2");
-        Assert.assertEquals("Despacito", t.getTitle());
-        Assert.assertEquals("Luis Fonsi", t.getSinger());
 
-        t = this.tm.getTrack2("T2");
-        Assert.assertEquals("Despacito", t.getTitle());
-        Assert.assertEquals("Luis Fonsi", t.getSinger());
 
-        Assert.assertThrows(TrackNotFoundException.class, () ->
-                this.tm.getTrack2("XXXXXXX"));
+        assertEquals("Libro 10", this.bm.catalogarLibro().getTitulo());
+        assertEquals("Libro 9", this.bm.catalogarLibro().getTitulo());
+        for (int i = 0; i < 7; i++) this.bm.catalogarLibro();
+        assertEquals("Libro 1", this.bm.catalogarLibro().getTitulo());
 
+        assertEquals(1, this.bm.totalMontones());
+
+        assertEquals("Libro 12", this.bm.catalogarLibro().getTitulo());
+        assertEquals("Libro 11", this.bm.catalogarLibro().getTitulo());
+
+        assertEquals(0, this.bm.totalMontones());
+        assertEquals(0, this.bm.totalLibrosAlmacen());
     }
 
     @Test
-    public void getTracksTest() {
-        Assert.assertEquals(3, tm.size());
-        List<Libro> tracks  = tm.findAll();
+    public void testCatalogarLibroDuplicado() throws AlmacenVacioException {
 
-        Libro t = tracks.get(0);
-        Assert.assertEquals("La Barbacoa", t.getTitle());
-        Assert.assertEquals("Georgie Dann", t.getSinger());
+        this.bm.reiniciar();
 
-        t = tracks.get(1);
-        Assert.assertEquals("Despacito", t.getTitle());
-        Assert.assertEquals("Luis Fonsi", t.getSinger());
+        this.bm.almacenarLibro(new Libro("ID1", "ISBN123", "Ready Player One", "Anonimo"));
+        this.bm.almacenarLibro(new Libro("ID2", "ISBN123", "Daredevil:Born Again", "Andrés"));
+        this.bm.almacenarLibro(new Libro("ID3", "ISBN456", "Recetas históricas", "Yaya"));
 
-        t = tracks.get(2);
-        Assert.assertEquals("Ent3r S4ndm4n", t.getTitle());
-        Assert.assertEquals("Metallica", t.getSinger());
+        assertEquals(1, this.bm.totalMontones());
+        assertEquals(0, this.bm.totalLibrosCatalogados());
 
-        Assert.assertEquals(3, tm.size());
+        this.bm.catalogarLibro();
+        assertEquals(1, this.bm.totalLibrosCatalogados());
+        assertEquals(1, this.bm.obtenerLibroCatalogado("ISBN456").getNumEjemplares());
 
+        this.bm.catalogarLibro();
+        assertEquals(2, this.bm.totalLibrosCatalogados());
+        assertEquals(1, this.bm.obtenerLibroCatalogado("ISBN123").getNumEjemplares());
+        // Comprobamos que usa el título del PRIMER libro que catalogó con ese ISBN
+        assertEquals("Daredevil:Born Again", this.bm.obtenerLibroCatalogado("ISBN123").getTitulo());
+
+
+        this.bm.catalogarLibro();
+        assertEquals(2, this.bm.totalLibrosCatalogados());
+        assertEquals(2, this.bm.obtenerLibroCatalogado("ISBN123").getNumEjemplares());
+        // Comprobamos que el título NO ha cambiado
+        assertEquals("Daredevil:Born Again", this.bm.obtenerLibroCatalogado("ISBN123").getTitulo());
     }
 
     @Test
-    public void updateTrackTest() {
-        Assert.assertEquals(3, tm.size());
-        Libro t = this.tm.getTrack("T3");
-        Assert.assertEquals("Ent3r S4ndm4n", t.getTitle());
-        Assert.assertEquals("Metallica", t.getSinger());
+    public void testPrestarLibro() throws Exception {
+        LibroCatalogado libroCat = this.bm.catalogarLibro(); // ID10, ISBN10 (con el arreglo)
+        String isbn = libroCat.getIsbn();
 
-        t.setTitle("Enter Sandman");
-        this.tm.updateTrack(t);
+        assertEquals(1, this.bm.obtenerLibroCatalogado(isbn).getNumEjemplares());
 
-        t = this.tm.getTrack("T3");
-        Assert.assertEquals("Enter Sandman", t.getTitle());
-        Assert.assertEquals("Metallica", t.getSinger());
+        this.bm.prestarLibro("p1", "lector1", isbn);
+
+        assertEquals(0, this.bm.obtenerLibroCatalogado(isbn).getNumEjemplares());
+        assertEquals(1, this.bm.consultarPrestamosLector("lector1").size());
     }
 
+    @Test(expected = SinEjemplaresException.class)
+    public void testPrestarLibroErrorSinEjemplares() throws Exception {
+        LibroCatalogado libroCat = this.bm.catalogarLibro(); // ID10, ISBN10 (con el arreglo)
+        String isbn = libroCat.getIsbn();
 
-    @Test
-    public void deleteTrackTest() {
-        Assert.assertEquals(3, tm.size());
-        this.tm.deleteTrack("T3");
-        Assert.assertEquals(2, tm.size());
+        this.bm.prestarLibro("p1", "lector1", isbn);
+        assertEquals(0, this.bm.obtenerLibroCatalogado(isbn).getNumEjemplares());
 
-        Assert.assertThrows(TrackNotFoundException.class, () ->
-                this.tm.getTrack2("T3"));
-
+        this.bm.prestarLibro("p2", "lector1", isbn);
     }
 }

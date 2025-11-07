@@ -1,4 +1,2 @@
 package edu.upc.dsa.exceptions;
-
-public class AlmacenVacioException {
-}
+public class AlmacenVacioException extends Exception {}

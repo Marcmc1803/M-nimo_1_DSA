@@ -1,4 +1,2 @@
 package edu.upc.dsa.exceptions;
-
-public class SinEjemplaresException {
-}
+public class SinEjemplaresException extends Exception {}
