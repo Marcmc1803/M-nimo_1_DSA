@@ -12,7 +12,7 @@ public class Prestamo {
     String fechaDevolucion;
     String estado;
 
-    // Constructor vacío (OBLIGATORIO)
+
     public Prestamo() {}
 
     public Prestamo(String id, String lectorId, String libroIsbn) {
@@ -20,8 +20,7 @@ public class Prestamo {
         this.lectorId = lectorId;
         this.libroIsbn = libroIsbn;
         this.fechaPrestamo = new Date().toString();
-        long quinceDias = 1000L * 60 * 60 * 24 * 15;
-        this.fechaDevolucion = new Date(System.currentTimeMillis() + quinceDias).toString();
+        this.fechaDevolucion = new Date().toString();
         this.estado = "En trámite";
     }
 

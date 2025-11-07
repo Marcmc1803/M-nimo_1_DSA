@@ -16,6 +16,8 @@ public class BibliotecaManagerTest {
 
     @Before
     public void setUp() {
+
+
         this.bm = BibliotecaManagerImpl.getInstance();
 
         this.bm.agregarLector(new Lector("lector1", "Marc", "Martín", "5678JG45Q"));
@@ -88,20 +90,20 @@ public class BibliotecaManagerTest {
         this.bm.catalogarLibro();
         assertEquals(2, this.bm.totalLibrosCatalogados());
         assertEquals(1, this.bm.obtenerLibroCatalogado("ISBN123").getNumEjemplares());
-        // Comprobamos que usa el título del PRIMER libro que catalogó con ese ISBN
+
         assertEquals("Daredevil:Born Again", this.bm.obtenerLibroCatalogado("ISBN123").getTitulo());
 
 
         this.bm.catalogarLibro();
         assertEquals(2, this.bm.totalLibrosCatalogados());
         assertEquals(2, this.bm.obtenerLibroCatalogado("ISBN123").getNumEjemplares());
-        // Comprobamos que el título NO ha cambiado
+
         assertEquals("Daredevil:Born Again", this.bm.obtenerLibroCatalogado("ISBN123").getTitulo());
     }
 
     @Test
     public void testPrestarLibro() throws Exception {
-        LibroCatalogado libroCat = this.bm.catalogarLibro(); // ID10, ISBN10 (con el arreglo)
+        LibroCatalogado libroCat = this.bm.catalogarLibro();
         String isbn = libroCat.getIsbn();
 
         assertEquals(1, this.bm.obtenerLibroCatalogado(isbn).getNumEjemplares());
@@ -114,7 +116,7 @@ public class BibliotecaManagerTest {
 
     @Test(expected = SinEjemplaresException.class)
     public void testPrestarLibroErrorSinEjemplares() throws Exception {
-        LibroCatalogado libroCat = this.bm.catalogarLibro(); // ID10, ISBN10 (con el arreglo)
+        LibroCatalogado libroCat = this.bm.catalogarLibro();
         String isbn = libroCat.getIsbn();
 
         this.bm.prestarLibro("p1", "lector1", isbn);
