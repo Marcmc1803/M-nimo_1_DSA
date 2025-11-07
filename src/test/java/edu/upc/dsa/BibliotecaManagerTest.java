@@ -1,7 +1,7 @@
 package edu.upc.dsa;
 
 import edu.upc.dsa.exceptions.TrackNotFoundException;
-import edu.upc.dsa.models.Track;
+import edu.upc.dsa.models.Libro;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -9,12 +9,12 @@ import org.junit.Test;
 
 import java.util.List;
 
-public class TracksManagerTest {
-    TracksManager tm;
+public class ManagerTest {
+    Manager tm;
 
     @Before
     public void setUp() {
-        this.tm = TracksManagerImpl.getInstance();
+        this.tm = ManagerImpl.getInstance();
         this.tm.addTrack("T1", "La Barbacoa", "Georgie Dann");
         this.tm.addTrack("T2", "Despacito", "Luis Fonsi");
         this.tm.addTrack("T3", "Ent3r S4ndm4n", "Metallica");
@@ -40,7 +40,7 @@ public class TracksManagerTest {
     public void getTrackTest() throws Exception {
         Assert.assertEquals(3, tm.size());
 
-        Track t = this.tm.getTrack("T2");
+        Libro t = this.tm.getTrack("T2");
         Assert.assertEquals("Despacito", t.getTitle());
         Assert.assertEquals("Luis Fonsi", t.getSinger());
 
@@ -56,9 +56,9 @@ public class TracksManagerTest {
     @Test
     public void getTracksTest() {
         Assert.assertEquals(3, tm.size());
-        List<Track> tracks  = tm.findAll();
+        List<Libro> tracks  = tm.findAll();
 
-        Track t = tracks.get(0);
+        Libro t = tracks.get(0);
         Assert.assertEquals("La Barbacoa", t.getTitle());
         Assert.assertEquals("Georgie Dann", t.getSinger());
 
@@ -77,7 +77,7 @@ public class TracksManagerTest {
     @Test
     public void updateTrackTest() {
         Assert.assertEquals(3, tm.size());
-        Track t = this.tm.getTrack("T3");
+        Libro t = this.tm.getTrack("T3");
         Assert.assertEquals("Ent3r S4ndm4n", t.getTitle());
         Assert.assertEquals("Metallica", t.getSinger());
 
