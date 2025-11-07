@@ -12,12 +12,12 @@ public class LibroCatalogado {
 
     public LibroCatalogado() {}
 
-
+//Pillamos las variables necesarias de la clase Libro
     public LibroCatalogado(Libro libro) {
         this.isbn = libro.getIsbn();
         this.titulo = libro.getTitulo();
         this.autor = libro.getAutor();
-        this.numEjemplares = 1; // El primer ejemplar
+        this.numEjemplares = 1;
     }
 
 

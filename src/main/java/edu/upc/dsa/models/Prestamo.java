@@ -19,8 +19,8 @@ public class Prestamo {
         this.id = id;
         this.lectorId = lectorId;
         this.libroIsbn = libroIsbn;
-        this.fechaPrestamo = new Date().toString();
-        this.fechaDevolucion = new Date().toString();
+        this.fechaPrestamo = fechaPrestamo;
+        this.fechaDevolucion = fechaDevolucion;
         this.estado = "En trámite";
     }
 

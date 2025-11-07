@@ -37,15 +37,15 @@ public class BibliotecaManagerImpl implements BibliotecaManager {
 
     @Override
     public Lector agregarLector(Lector lector) {
-        logger.info("agregarLector(" + lector + ")");
+        logger.info("agregar Lector(" + lector + ")");
         this.lectores.put(lector.getId(), lector);
-        logger.info("Lector añadido/actualizado: " + lector.getNombre());
+        logger.info("Lector añadido: " + lector.getNombre());
         return lector;
     }
 
     @Override
     public void almacenarLibro(Libro libro) {
-        logger.info("almacenarLibro(" + libro + ")");
+        logger.info("almacenar Libro(" + libro + ")");
 
         Stack<Libro> ultimoMonton = ((LinkedList<Stack<Libro>>) this.almacen).peekLast();
 
@@ -56,12 +56,12 @@ public class BibliotecaManagerImpl implements BibliotecaManager {
         }
 
         ultimoMonton.push(libro);
-        logger.info("Libro " + libro.getId() + " apilado. Tamaño del montón: " + ultimoMonton.size());
+        logger.info("Libro " + libro.getId() + " apilado. El tamaño del montón es: " + ultimoMonton.size());
     }
 
     @Override
     public LibroCatalogado catalogarLibro() throws AlmacenVacioException {
-        logger.info("catalogarLibro()");
+        logger.info("catalogar Libro()");
 
         Stack<Libro> primerMonton = this.almacen.peek();
 
