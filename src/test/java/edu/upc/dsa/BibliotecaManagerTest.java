@@ -26,7 +26,7 @@ public class BibliotecaManagerTest {
             this.bm.almacenarLibro(new Libro("ID" + i, "ISBN" + i, "Libro " + i, "Autor"));
         }
 
-
+        //Probamos con 2 libros mas
         this.bm.almacenarLibro(new Libro("ID11", "ISBN456", "Libro 11", "Autor"));
         this.bm.almacenarLibro(new Libro("ID12", "ISBN789", "Libro 12", "Autor"));
     }
